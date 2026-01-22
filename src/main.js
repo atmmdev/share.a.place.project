@@ -1,5 +1,8 @@
 import "./style.css";
 
+// Modal
+import { Modal } from "./UI/modal.js";
+
 class PlaceFinder {
   constructor() {
     const addressForm = document.querySelector("form");
@@ -15,14 +18,20 @@ class PlaceFinder {
       return;
     }
 
+    const modal = new Modal("loading-modal-content", "Loading location...");
+    modal.show();
+
     navigator.geolocation.getCurrentPosition(
       (successResult) => {
+        modal.hide();
+
         const coordinates = {
           lat: successResult.coords.latitude,
           lng: successResult.coords.longitude,
         };
       },
       (error) => {
+        modal.hide();
         alert("Could not locate you. Please enter an address manually!");
       },
     );
