@@ -1,6 +1,9 @@
 import "./style.css";
 
-// Modal
+/**
+ * Module imports
+ * @module
+ */
 import { Modal } from "./UI/Modal.js";
 import { Map } from "./UI/Map.js";
 import "leaflet/dist/leaflet.css";
