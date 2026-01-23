@@ -1,3 +1,9 @@
+/**
+ * Modal class to handle displaying and hiding modal dialogs.
+ * @class
+ * @param {string} contentId - The ID of the template element containing modal content.
+ * @param {string} fallbackText - The fallback text to display if templates are not supported.
+ */
 export class Modal {
   constructor(contentId, fallbackText) {
     this.fallbackText = fallbackText;
