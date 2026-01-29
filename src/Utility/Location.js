@@ -1,3 +1,18 @@
+export async function getAddressFromCoords(lat, lng) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "shared-a-place-project", // Nominatim requires a valid User-Agent
+    },
+  });
+  const data = await response.json();
+
+  if (!data.address) {
+    throw new Error("Address not found!");
+  }
+  return data.display_name;
+}
+
 export async function getCoordsFromAddress(address) {
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
 

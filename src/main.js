@@ -6,7 +6,10 @@ import "./style.css";
  */
 import { Modal } from "./UI/Modal.js";
 import { Map } from "./UI/Map.js";
-import { getCoordsFromAddress } from "./Utility/Location.js";
+import {
+  getCoordsFromAddress,
+  getAddressFromCoords,
+} from "./Utility/Location.js";
 import "leaflet/dist/leaflet.css";
 
 /**
@@ -17,19 +20,36 @@ class PlaceFinder {
   constructor() {
     const addressForm = document.querySelector("form");
     const locateUserBtn = document.getElementById("locate-btn");
-
+    this.shareBtn = document.getElementById("share-btn");
     this.map = null;
 
     locateUserBtn.addEventListener("click", this.locateUserHandler.bind(this));
+    this.shareBtn.addEventListener("click", this.sharePlaceHandler.bind(this));
     addressForm.addEventListener("submit", this.findAddressHandler.bind(this));
   }
 
-  selectPlace(coordinates) {
+  sharePlaceHandler() {
+    const sharedLinkInputElement = document.getElementById("share-link");
+    if (!navigator.clipboard) {
+      sharedLinkInputElement.select();
+      return;
+    }
+
+    navigator.clipboard.writeText(sharedLinkInputElement.value).then(() => {
+      alert("Copied into clipboard!");
+    });
+  }
+
+  selectPlace(coordinates, address) {
     if (this.map) {
       this.map.update(coordinates);
     } else {
       this.map = new Map(coordinates);
     }
+
+    this.shareBtn.disabled = false;
+    const sharedLinkInputElement = document.getElementById("share-link");
+    sharedLinkInputElement.value = `${location.origin}/?address=${encodeURIComponent(address)}&lat=${coordinates.lat}&lng=${coordinates.lng}`;
   }
 
   locateUserHandler() {
@@ -42,15 +62,18 @@ class PlaceFinder {
     modal.show();
 
     navigator.geolocation.getCurrentPosition(
-      (successResult) => {
-        modal.hide();
-
+      async (successResult) => {
         const coordinates = {
           lat: successResult.coords.latitude,
           lng: successResult.coords.longitude,
         };
 
-        this.selectPlace(coordinates);
+        const address = await getAddressFromCoords(
+          coordinates.lat,
+          coordinates.lng,
+        );
+        modal.hide();
+        this.selectPlace(coordinates, address);
       },
       (error) => {
         modal.hide();
@@ -74,7 +97,7 @@ class PlaceFinder {
     try {
       const coordinates = await getCoordsFromAddress(address);
       console.log(coordinates);
-      this.selectPlace(coordinates);
+      this.selectPlace(coordinates, address);
       modal.hide();
     } catch (error) {
       alert(error.message);
