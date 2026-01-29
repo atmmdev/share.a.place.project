@@ -6,6 +6,7 @@ import "./style.css";
  */
 import { Modal } from "./UI/Modal.js";
 import { Map } from "./UI/Map.js";
+import { getCoordsFromAddress } from "./Utility/Location.js";
 import "leaflet/dist/leaflet.css";
 
 /**
@@ -18,11 +19,17 @@ class PlaceFinder {
     const locateUserBtn = document.getElementById("locate-btn");
 
     this.map = null;
-    this.locateUserHandler = this.locateUserHandler.bind(this);
-    this.findAddressHandler = this.findAddressHandler.bind(this);
 
-    locateUserBtn.addEventListener("click", this.locateUserHandler);
-    addressForm.addEventListener("submit", this.findAddressHandler);
+    locateUserBtn.addEventListener("click", this.locateUserHandler.bind(this));
+    addressForm.addEventListener("submit", this.findAddressHandler.bind(this));
+  }
+
+  selectPlace(coordinates) {
+    if (this.map) {
+      this.map.update(coordinates);
+    } else {
+      this.map = new Map(coordinates);
+    }
   }
 
   locateUserHandler() {
@@ -42,11 +49,8 @@ class PlaceFinder {
           lat: successResult.coords.latitude,
           lng: successResult.coords.longitude,
         };
-        if (!this.map) {
-          this.map = new Map(coordinates);
-        } else {
-          this.map.update(coordinates);
-        }
+
+        this.selectPlace(coordinates);
       },
       (error) => {
         modal.hide();
@@ -55,6 +59,26 @@ class PlaceFinder {
     );
   }
 
-  findAddressHandler() {}
+  async findAddressHandler(event) {
+    event.preventDefault();
+    const address = event.target.querySelector("input").value;
+
+    if (!address || address.trim().length === 0) {
+      alert("Please enter a valid address!");
+      return;
+    }
+
+    const modal = new Modal("loading-modal-content", "Loading location...");
+    modal.show();
+
+    try {
+      const coordinates = await getCoordsFromAddress(address);
+      console.log(coordinates);
+      this.selectPlace(coordinates);
+      modal.hide();
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 }
 new PlaceFinder();
