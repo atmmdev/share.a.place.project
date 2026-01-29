@@ -70,7 +70,7 @@ Icons: https://simpleicons.org/
 ├── src/
 │   ├── UI/
 │   │   ├── Map.js
-│   │   └── modal.js
+│   │   └── Modal.js
 │   ├── Utility/
 │   │   └── Location.js
 │   ├── main.js
@@ -84,7 +84,7 @@ Icons: https://simpleicons.org/
 
 - [src/main.js](src/main.js): handles search, geolocation, map updates, and sharing.
 - [src/UI/Map.js](src/UI/Map.js): renders and updates the map with Leaflet.
-- [src/UI/modal.js](src/UI/modal.js): loading modal during requests.
+- [src/UI/Modal.js](src/UI/Modal.js): loading modal during requests.
 - [src/Utility/Location.js](src/Utility/Location.js): Nominatim integration for geocoding and reverse geocoding.
 - [src/style.css](src/style.css): global UI styles.
 - [index.html](index.html): base page structure.
@@ -93,7 +93,7 @@ Icons: https://simpleicons.org/
 
 ### Prerequisites
 
-- Node.js 18+ (recommended)
+- Node.js 20.19+ or 22.12+ (recommended)
 - npm
 - Vite
 
