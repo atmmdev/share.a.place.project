@@ -4,7 +4,7 @@ import "./style.css";
  * Module imports
  * @module
  */
-import { Modal } from "./UI/Modal.js";
+import { Modal } from "./UI/modal.js";
 import { Map } from "./UI/Map.js";
 import {
   getCoordsFromAddress,
